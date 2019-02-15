@@ -1,7 +1,7 @@
 const users={};
 
-users.login=function(dataObject,callback){
-
+users.create=function(dataObject,callback){
+    
 };
 
 /**
