@@ -88,6 +88,10 @@ helpers.sendEmail = function (subject, to, text) {
         }
     });
 };
+helpers.makePayment = function (amount, desc, currency) {
+    const apiKey = "sk_test_RhuBz2kOAhuv0GHrKRWOjQlt";
+    amount = typeof (amount) === 'number' && amount > 0 ? amount : false;
+};
 /**
  * Exporting the helpers.
  */
