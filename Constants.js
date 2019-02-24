@@ -9,6 +9,7 @@ messages.headers = {
 messages.errorMessage="Error.";
 messages.insufficientData="Insufficient Data";
 messages.invalidRequestMethod="Invalid Request method.";
+messages.accountDontExists="we couldn't find an account matching the combination of this email and password.";
 
 
 /**

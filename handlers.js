@@ -7,7 +7,7 @@ const users = require('./Users');
  */
 handlers.notFound = function (dataObject) {
     return new Promise((resolve, reject) => {
-        resolve([400, {'res': messages.invalidPath}]);
+        reject([400, {'res': messages.invalidPath}]);
     });
 };
 /**
@@ -21,6 +21,12 @@ handlers.users = function (dataObject) {
         switch (dataObject.path) {
             case "new":
                 promise = users.create(dataObject);
+                break;
+            case "login":
+                promise = users.login(dataObject);
+                break;
+            case "menu":
+                promise = users.menu(dataObject);
                 break;
             default:
                 reject([400, {'res': messages.invalidPath}]);
