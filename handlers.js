@@ -1,6 +1,7 @@
 const messages = require('./Constants');
 const handlers = {};
 const users = require('./Users');
+const orders = require('./Orders');
 /**
  * Send the default Response.
  * @param dataObject
@@ -39,5 +40,30 @@ handlers.users = function (dataObject) {
         });
     });
 };
-
+/**
+ * Handler to handle the  Order Requests.
+ * @param dataObject: The Data object.
+ * @returns {Promise<any>}
+ */
+handlers.order = function (dataObject) {
+    return new Promise((resolve, reject) => {
+        let promise;
+        switch (dataObject.path) {
+            case "new":
+                promise = orders.create(dataObject);
+                break;
+            default:
+                reject([400, {'res': messages.invalidPath}]);
+                break;
+        }
+        promise.then(response => {
+            resolve(response);
+        }).catch(err => {
+            reject(err);
+        })
+    });
+};
+/**
+ * Exporting the Handlers.
+ */
 module.exports = handlers;
