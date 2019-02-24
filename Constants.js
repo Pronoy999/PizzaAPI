@@ -6,6 +6,9 @@ messages.headers = {
     'Access-Control-Max-Age': 2592000,
     'Access-Control-Allow-Headers': 'Content-Type'
 };
+messages.errorMessage="Error.";
+messages.insufficientData="Insufficient Data";
+messages.invalidRequestMethod="Invalid Request method.";
 
 
 /**
