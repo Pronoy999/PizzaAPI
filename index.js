@@ -3,16 +3,18 @@ const url = require('url');
 const stringDecoder = require('string_decoder').StringDecoder;
 const handlers = require('./handlers');
 const helpers = require('./helpers');
-const message=require('./Constants');
+const message = require('./Constants');
 const router = {
-    'users': handlers.users
+    'users': handlers.users,
+    'orders':handlers.order,
+    'payment':handlers.payment
 };
 
 const unifiedServer = function (req, res) {
     const parsedUrl = url.parse(req.url, true);
     const pathName = parsedUrl.pathname;
     let trimmedPath = pathName.replace(/^\/+|\/+$/g, '');
-    let actualPath = trimmedPath.substring(trimmedPath.indexOf('/')+1);
+    let actualPath = trimmedPath.substring(trimmedPath.indexOf('/') + 1);
     trimmedPath = trimmedPath.split("/")[0];
     //console.log(actualPath);
     const method = req.method.toLowerCase();
@@ -36,7 +38,12 @@ const unifiedServer = function (req, res) {
     });
 
     function execHandlers(data) {
-        chosenHandler(data, function (err, statusCode, responseData) {
+        /**
+         * Method to send the response.
+         * @param responseData: the Response Object to be send.
+         * @param statusCode: the status code.
+         */
+        function sendResponse(responseData, statusCode) {
             responseData = typeof (responseData) === 'object' ? responseData : {};
             statusCode = typeof (statusCode) === 'number' ? statusCode : 400;
             const responseObject = JSON.stringify(responseData);
@@ -48,6 +55,12 @@ const unifiedServer = function (req, res) {
             } catch (e) {
                 console.log(e);
             }
+        }
+
+        chosenHandler(data).then(response => {
+            sendResponse(response[1], response[0]);
+        }).catch(response => {
+            sendResponse(response[1], response[0]);
         });
     }
 };
