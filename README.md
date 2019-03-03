@@ -5,9 +5,9 @@ POST /users/data
 Request Body: {"emai":"","password": "", "name":"","address":""}
 
 ## To Login
-POST /users/login
-Request Body: {"email":"","password:""}
-Response: {'res':YOUR_TOKEN}
+- POST /users/login
+- Request Body: {"email":"","password:""}
+- Response: {'res':YOUR_TOKEN}
 
 ## To Logout
 DELETE /users/login?token=YOUR_TOKEN
