@@ -6,7 +6,8 @@ const helpers = require('./helpers');
 const message = require('./Constants');
 const router = {
     'users': handlers.users,
-    'orders':handlers.order
+    'orders':handlers.order,
+    'payment':handlers.payment
 };
 
 const unifiedServer = function (req, res) {

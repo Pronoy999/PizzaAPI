@@ -16,7 +16,6 @@ users.create = function (dataObject) {
                 helpers.getHash(dataObject.postData.password) : false;
             const address = typeof (dataObject.postData.address) === 'string' ? dataObject.postData.address : false;
             if (name && email && password && address) {
-
                 //const token = helpers.generateToken(16);
                 const query = "INSERT INTO users_data VALUES('','" + name + "','" + email +
                     "','" + password + "','" + address + "','')";
@@ -26,6 +25,47 @@ users.create = function (dataObject) {
                 }).catch(err => {
                     console.error(err.stack);
                     reject([500, {'res': message.errorMessage}]);
+                });
+            } else {
+                reject([400, {'res': message.insufficientData}]);
+            }
+        } else if (dataObject.method === 'put') {
+            const name = typeof (dataObject.postData.name) === 'string' ? dataObject.postData.name : false;
+            const email = typeof (dataObject.postData.email) === 'string' ? dataObject.postData.email : false;
+            let password = typeof (dataObject.postData.password) === 'string' ?
+                helpers.getHash(dataObject.postData.password) : false;
+            const address = typeof (dataObject.postData.address) === 'string' ? dataObject.postData.address : false;
+            if (email && (name || password || address)) {
+                let setClause = "SET ";
+                if (name) {
+                    setClause += " name = '" + name + "',";
+                }
+                if (password) {
+                    password = helpers.getHash(password);
+                    setClause += "password = '" + password + "',";
+                }
+                if (address) {
+                    setClause += "address = '" + address + "',";
+                }
+                setClause = setClause.substring(0, setClause.length - 1);
+                const query = "UPDATE users_data " + setClause + " WHERE email LIKE '" + email + "'";
+                database.query(query).then(updateData => {
+                    resolve([200, {'res': true}]);
+                }).catch(err => {
+                    console.error(err.stack);
+                    reject([500, {'res': message.errorMessage}]);
+                });
+            } else {
+                reject([400, {'res': message.insufficientData}]);
+            }
+        } else if (dataObject.method === 'delete') {
+            const email = typeof (dataObject.postData.email) === 'string' ? dataObject.postData.email : false;
+            const query = "DELETE FROM users_data WHERE email LIKE '" + email + "'";
+            if (email) {
+                database.query(query).then(deleteData => {
+                    resolve([200, {'res': true}]);
+                }).catch(err => {
+                    reject([500, {'res': message.errorMessage}])
                 });
             } else {
                 reject([400, {'res': message.insufficientData}]);
@@ -71,11 +111,18 @@ users.login = function (dataObject) {
         } else if (dataObject.method === 'delete') {
             const token = typeof (dataObject.queryString.token) === 'string' ? dataObject.queryString.token : false;
             if (token) {
-                const query = "UPDATE users_data SET token = '' WHERE token LIKE '" + token + "'";
-                database.query(query).then(updateData => {
-                    resolve([200, {'res': true}]);
+                let query = "SELECT * FROM users_data WHERE token LIKE '" + token + "'";
+                database.query(query).then(tokenData => {
+                    if (tokenData.length > 0) {
+                        query = "UPDATE users_data SET token = '' WHERE token LIKE '" + token + "'";
+                        database.query(query).then(updateData => {
+                            resolve([200, {'res': true}]);
+                        }).catch(err => {
+                            reject([500, {'res': message.errorMessage}]);
+                        });
+                    }
                 }).catch(err => {
-                    reject([500, {'res': message.errorMessage}]);
+                    reject(403, {'res': message.invalidToken});
                 });
             } else {
                 reject([400, {'res': message.insufficientData}]);

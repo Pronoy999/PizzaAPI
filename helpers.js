@@ -88,9 +88,57 @@ helpers.sendEmail = function (subject, to, text) {
         }
     });
 };
-helpers.makePayment = function (amount, desc, currency) {
-    const apiKey = "sk_test_RhuBz2kOAhuv0GHrKRWOjQlt";
-    amount = typeof (amount) === 'number' && amount > 0 ? amount : false;
+/**
+ * Method to  make the payment.
+ * @param amount: The Amount to be paid.
+ * @param description
+ * @param currency: The currency for the payment.
+ * @param source
+ * @returns {Promise<any>}
+ */
+helpers.makePayment = (amount, description, currency = "inr", source = "tok_visa") => {
+    return new Promise((resolve, reject) => {
+        amount = typeof (amount) === "number" && amount > 0 ? amount : false;
+        description = typeof (description) === "string" && description.trim().length >= 1 ? description.trim() : false;
+        currency = ["inr", "usd", "eur", "gbp", "yen"].indexOf(currency) > -1 ? currency : false;
+        source = typeof (source) === "string" && source.trim().length > 3 ? source.trim() : "tok_visa";
+        console.log(amount, description, currency, source);
+        if (amount && description && currency && source) {
+            const payload = {
+                amount,
+                description,
+                currency,
+                source,
+            };
+            const payloadString = JSON.stringify(payload);
+            const requestDetails = {
+                protocol: "https:",
+                host: "api.stripe.com",
+                path: "/v1/charges",
+                method: "POST",
+                auth: "sk_test_1YuqtAdlWLrmKAj7KXmjulIE",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                    "Content-Length": Buffer.byteLength(payloadString),
+                    "Authorization": "Bearer sk_test_1YuqtAdlWLrmKAj7KXmjulIE",
+                }
+            };
+            const request = https.request(requestDetails, res => {
+                if ([200, 201].indexOf(res.statusCode) > -1) {
+                    resolve(res.statusCode);
+                } else {
+                    reject(res.statusCode);
+                }
+            });
+            request.on("error", err => {
+                reject('Error while sending request to stripe payment gateway.');
+            });
+            request.write(payloadString);
+            request.end();
+        } else {
+            reject("Error");
+        }
+    });
 };
 /**
  * Exporting the helpers.
