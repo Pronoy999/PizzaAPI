@@ -3,7 +3,7 @@ const database = {};
 const pool = mysql.createPool({
     host: HOST,
     user: USER_NAME,
-    database: DATABASE_NAME',
+    database: DATABASE_NAME,
     password: PASSWORD,
     port: PORT_NUMBER
 });
