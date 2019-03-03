@@ -14,7 +14,11 @@ Copyright 2019 Pronoy Mukherjee
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-   
+### Other Libraries:    
+This application use SQL to store the data. 
+- Used [mailgun](https://www.mailgun.com) as mail agent using free account.
+- Used [strip](https://www.strip.com) as payment gateway with dummy tokens.
+
 ## To create a new User: 
 POST /users/data
 Request Body: {"emai":"","password": "", "name":"","address":""}
